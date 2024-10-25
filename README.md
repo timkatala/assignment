@@ -8,8 +8,6 @@ A FastAPI-based service that manages users and messages with PostgreSQL as the d
 - [Setup](#setup)
 - [Usage](#usage)
 - [Testing](#testing)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 - **User Management**: Create, update, soft delete, and retrieve users by email.
