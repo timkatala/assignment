@@ -1,6 +1,6 @@
 import logging
 
-from typing import List
+from typing import List, Tuple
 from uuid import UUID
 
 from src.domain.exceptions.message import MessageNotFoundException
@@ -31,11 +31,15 @@ class MessageService:
 
         return await self.message_repository.create(message)
 
-    async def get_mesages_by_sender_id(self, sender_id: UUID) -> List[Message]:
+    async def get_mesages_by_sender_id(
+        self, sender_id: UUID, limit: int = None, offset: int = None
+    ) -> Tuple[int, List[Message]]:
         """
         Retrieves all messages sent by a specific user.
         """
-        return await self.message_repository.get_by_sender_id(sender_id=sender_id)
+        messages = await self.message_repository.get_by_sender_id(sender_id=sender_id, limit=limit, offset=offset)
+        count = await self.message_repository.get_by_sender_id_count(sender_id=sender_id)
+        return count, messages
 
     async def delete_message(self, message_id: UUID) -> None:
         """

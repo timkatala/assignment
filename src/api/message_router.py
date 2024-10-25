@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from uuid import UUID
-from typing import List
+from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.schema.message_schema import MessageRequestBody
+from src.api.schema.message_schema import MessageRequestBody, PaginatedMessageResponse
 from src.infrastructure.repositories.message import MessageRepository
 from src.infrastructure.repositories.user import UserRepository
 from src.infrastructure.services.message_service import MessageService
@@ -31,10 +31,15 @@ async def create_message(message: MessageRequestBody, service: MessageService = 
 
 
 # GET: Get messages sent by a particular user
-@message_router.get("/sender/{sender_id}", response_model=List[Message])
-async def get_messages_by_sender_id(sender_id: UUID, service: MessageService = Depends(get_message_service)):
-    messages = await service.get_mesages_by_sender_id(sender_id)
-    return messages
+@message_router.get("/sender/{sender_id}", response_model=PaginatedMessageResponse)
+async def get_messages_by_sender_id(
+    sender_id: UUID,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    service: MessageService = Depends(get_message_service),
+):
+    total_count, messages = await service.get_mesages_by_sender_id(sender_id, limit=limit, offset=offset)
+    return PaginatedMessageResponse(count=total_count, messages=messages)
 
 
 # DELETE: Soft delete a message by its ID

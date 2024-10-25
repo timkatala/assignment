@@ -79,3 +79,12 @@ async def test_soft_delete_by_sender_id(session_fixture, messages, user):
     messages = result.scalars().all()
 
     assert all(message.is_deleted for message in messages)
+
+
+@pytest.mark.asyncio
+async def test_get_by_sender_id_with_count(session_fixture, user, messages):
+    message_repo = MessageRepository(session_fixture)
+
+    result = await message_repo.get_by_sender_id_count(sender_id=user.id)
+
+    assert result == 10

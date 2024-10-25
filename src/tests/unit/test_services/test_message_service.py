@@ -57,22 +57,30 @@ class TestMessageService:
     @pytest.mark.asyncio
     async def test_get_messages_by_sender_id_success(self, message_service, message):
         message_service.message_repository.get_by_sender_id.return_value = [message]
+        message_service.message_repository.get_by_sender_id_count.return_value = 1
 
-        result = await message_service.get_mesages_by_sender_id(message.sender_id)
+        result = await message_service.get_mesages_by_sender_id(message.sender_id, limit=5, offset=5)
 
-        message_service.message_repository.get_by_sender_id.assert_awaited_once_with(sender_id=message.sender_id)
-        assert result == [message]
+        message_service.message_repository.get_by_sender_id.assert_awaited_once_with(
+            sender_id=message.sender_id, limit=5, offset=5
+        )
+        message_service.message_repository.get_by_sender_id_count.assert_awaited_once_with(sender_id=message.sender_id)
+        assert result == (1, [message])
 
     @pytest.mark.asyncio
     async def test_get_messages_by_sender_id_no_messages(self, message_service):
         sender_id = uuid4()
 
         message_service.message_repository.get_by_sender_id.return_value = []
+        message_service.message_repository.get_by_sender_id_count.return_value = 0
 
         result = await message_service.get_mesages_by_sender_id(sender_id)
 
-        message_service.message_repository.get_by_sender_id.assert_awaited_once_with(sender_id=sender_id)
-        assert result == []
+        message_service.message_repository.get_by_sender_id.assert_awaited_once_with(
+            sender_id=sender_id, limit=None, offset=None
+        )
+        message_service.message_repository.get_by_sender_id_count.assert_awaited_once_with(sender_id=sender_id)
+        assert result == (0, [])
 
     @pytest.mark.asyncio
     async def test_delete_message_success(self, message_service, message):
