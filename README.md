@@ -21,6 +21,7 @@ A FastAPI-based service that manages users and messages with PostgreSQL as the d
 - **SQLModel**: Pydantic models + SQLAlchemy ORM for PostgreSQL.
 - **PostgreSQL**: Database to store user and message data.
 - **SQLAlchemy**: ORM used for database operations.
+- **Alembic**: Migration tool
 - **pytest**: Testing framework.
 - **pre-commit**: Code quality and style checks.
 
