@@ -1,4 +1,4 @@
-# Messaging API
+# CRUD API
 
 A FastAPI-based service that manages users and messages with PostgreSQL as the database. The API provides endpoints for user and message CRUD operations
 
@@ -13,7 +13,7 @@ A FastAPI-based service that manages users and messages with PostgreSQL as the d
 
 ## Features
 - **User Management**: Create, update, soft delete, and retrieve users by email.
-- **Messaging Service**: Create, receive, and soft delete messages.
+- **Message Service**: Create, receive, and soft delete messages.
 - **Domain-Driven Design (DDD)**: Code is organized based on DDD principles for better scalability and maintenance.
 
 ## Technologies Used
