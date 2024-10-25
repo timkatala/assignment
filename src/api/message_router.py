@@ -4,6 +4,7 @@ from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.api.schema.message_schema import MessageRequestBody
 from src.infrastructure.repositories.message import MessageRepository
 from src.infrastructure.repositories.user import UserRepository
 from src.infrastructure.services.message_service import MessageService
@@ -21,9 +22,9 @@ async def get_message_service(session: AsyncSession = Depends(get_session)) -> M
 
 # POST: Create a new message
 @message_router.post("/", response_model=Message, status_code=status.HTTP_201_CREATED)
-async def create_message(message: Message, service: MessageService = Depends(get_message_service)):
+async def create_message(message: MessageRequestBody, service: MessageService = Depends(get_message_service)):
     try:
-        created_message = await service.create_message(message)
+        created_message = await service.create_message(Message(**message.dict()))
         return created_message
     except UserNotFoundException as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))

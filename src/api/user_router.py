@@ -3,6 +3,8 @@ from uuid import UUID
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.api.schema.user_schema import UserRequestBody
 from src.infrastructure.services.user_service import UserService
 from src.infrastructure.repositories.user import UserRepository
 from src.infrastructure.repositories.message import MessageRepository
@@ -21,9 +23,9 @@ async def get_user_service(session: AsyncSession = Depends(get_session)) -> User
 
 # POST: Create a new user
 @user_router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
-async def create_user(user: User, service: UserService = Depends(get_user_service)):
+async def create_user(user: UserRequestBody, service: UserService = Depends(get_user_service)):
     try:
-        created_user = await service.create_user(user)
+        created_user = await service.create_user(User(**user.dict()))
         return created_user
     except UserAlreadyExistsException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -40,9 +42,9 @@ async def get_user_by_email(email: str, service: UserService = Depends(get_user_
 
 # PATCH: Update a user's details
 @user_router.patch("/{user_id}", response_model=User)
-async def update_user(user_id: UUID, user: User, service: UserService = Depends(get_user_service)):
+async def update_user(user_id: UUID, user: UserRequestBody, service: UserService = Depends(get_user_service)):
     try:
-        updated_user = await service.update_user(user_id, user)
+        updated_user = await service.update_user(user_id, User(**user.dict()))
         return updated_user
     except UserAlreadyExistsException as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
